@@ -1,8 +1,11 @@
 import React from 'react';
+import { Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <h1>React Project</h1>
+    <Routes>
+
+    </Routes>
   );
 }
 
