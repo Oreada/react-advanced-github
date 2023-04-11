@@ -27,7 +27,7 @@ export function HomePage() {
 
 	return (
 		<div className="pt-10 mx-auto h-full w-full">
-			{isError && <p className="text-center text-red-600 mb-10">Something went wrong</p>}
+			{isError && <p className="text-center text-red-600 mb-10">Something went wrong!</p>}
 
 			<div className="flex justify-center">
 				<div className="relative w-[560px]">
@@ -41,6 +41,7 @@ export function HomePage() {
 
 					{dropdown && <ul className="list-none overflow-y-scroll absolute top-[42px] left-0 right-0 max-h-[200px] shadow-md bg-white">
 						{isLoading && <p className="text-center">Loading...</p>}
+
 						{data?.map((user) => (
 							<li
 								key={user.id}
