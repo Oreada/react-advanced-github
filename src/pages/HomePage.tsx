@@ -26,9 +26,10 @@ export function HomePage() {
 	}, [debounced, data]);
 
 	return (
-		<div>
-			{isError && <p className="text-center text-red-600 mt-10">Something went wrong</p>}
-			<div className="flex justify-center pt-10 mx-auto h-screen w-screen">
+		<div className="pt-10 mx-auto h-full w-full">
+			{isError && <p className="text-center text-red-600 mb-10">Something went wrong</p>}
+
+			<div className="flex justify-center">
 				<div className="relative w-[560px]">
 					<input
 						type="text"
