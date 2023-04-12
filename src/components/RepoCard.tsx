@@ -1,10 +1,30 @@
+import { useState } from "react";
 import { IRepo } from "../models/models";
+import { addFavorite, removeFavorite } from "../store/github/github.slice";
+import { useAppDispatch, useAppSelector } from "../store/hook";
 
 export interface RepoCardProps {
 	repo: IRepo;
 }
 
 export function RepoCard({ repo }: RepoCardProps) {
+	const favoritesList = useAppSelector((state) => state.github.favorites);
+	const dispatch = useAppDispatch();
+
+	const [isFavorite, setIsFavorite] = useState(favoritesList.includes(repo.html_url));
+
+	const addToFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		dispatch(addFavorite(repo.html_url));
+		setIsFavorite(true);
+	};
+
+	const removeFromFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		dispatch(removeFavorite(repo.html_url));
+		setIsFavorite(false);
+	};
+
 	return (
 		<div className="border py-3 px-5 rounded mb-2 hover:shadow-md hover:bg-gray-100 transition-all">
 			<a href={repo.html_url} target="_blank" rel="noreferrer">
@@ -16,6 +36,18 @@ export function RepoCard({ repo }: RepoCardProps) {
 				<p className="text-sm font-thin">
 					{repo?.description}
 				</p>
+				{!isFavorite && <button
+					className="py-2 px-4 bg-yellow-400 rounded hover:shadow-md transition-all"
+					onClick={addToFavorite}
+				>
+					Add
+				</button>}
+				{isFavorite && <button
+					className="py-2 px-4 bg-green-400 rounded hover:shadow-md transition-all"
+					onClick={removeFromFavorite}
+				>
+					Remove
+				</button>}
 			</a>
 		</div>
 	)
