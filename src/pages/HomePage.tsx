@@ -18,7 +18,7 @@ export function HomePage() {
 	// console.log(data);
 
 	useEffect(() => {
-		console.log(debounced);
+		// console.log(debounced);
 
 		if (debounced.length > 2 && data?.length) {
 			setDropdown(true);
