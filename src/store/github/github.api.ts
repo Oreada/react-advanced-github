@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { IUser, ServerResponse } from '../../models/models';
+import { IRepo, IUser, ServerResponse } from '../../models/models';
 
 export const githubApi = createApi({
 	reducerPath: 'github/api',
@@ -20,8 +20,14 @@ export const githubApi = createApi({
 			}),
 			//! потому что мне нужно только поле items в данном случае, а вообще ключ transformResponse не является обязательным
 			transformResponse: (response: ServerResponse) => response.items,
-		})
+		}),
+		getUserRepos: build.query<IRepo[], string>({
+			query: (username: string) => ({
+				url: `users/${username}/repos`,
+			}),
+		}),
 	})
 });
 
-export const { useSearchUsersQuery } = githubApi;
+//! префикс Lazy позволяет сделать запрос когда захотим, ведь нам нужно делать запрос после клика по опред.пользователю
+export const { useSearchUsersQuery, useLazyGetUserReposQuery } = githubApi;

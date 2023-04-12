@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { RepoCard } from "../components/RepoCard";
 import { useDebounce } from "../customHooks/debounce";
-import { useSearchUsersQuery } from "../store/github/github.api"
+import { useLazyGetUserReposQuery, useSearchUsersQuery } from "../store/github/github.api"
 
 export function HomePage() {
 	const [search, setSearch] = useState('');
@@ -10,10 +11,9 @@ export function HomePage() {
 		//! это условие необходимо, чтобы не выполнялся запрос с пустым search, в результате которого выскакивает ошибка
 		skip: debounced.length < 3,
 	});
-
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setSearch(event.target.value);
-	};
+	//! [функция-позволяющая-загружать-данные-по-запросу, {объект-как-в-обычном-хуке-запроса(как-в-useSearchUsersQuery-например)}]
+	const [fetchRepos, { data: repositories, isLoading: areReposLoading }] = useLazyGetUserReposQuery();
+	//! переименовали для этого вызова data в repositories, isLoading в areReposLoading, т.к. такие имена уже есть выше
 
 	// console.log(data);
 
@@ -24,6 +24,15 @@ export function HomePage() {
 			setDropdown(true);
 		};
 	}, [debounced, data]);
+
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearch(event.target.value);
+	};
+
+	const handleClick = (username: string) => {
+		fetchRepos(username);
+		setDropdown(false);
+	};
 
 	return (
 		<div className="pt-10 mx-auto h-full w-full">
@@ -46,11 +55,20 @@ export function HomePage() {
 							<li
 								key={user.id}
 								className="py-2 px-4 hover:bg-gray-500 hover:text-white transition-colors cursor-pointer"
+								onClick={() => handleClick(user.login)}
 							>
 								{user.login}
 							</li>
 						))}
 					</ul>}
+
+					<div className="container">
+						{areReposLoading && <p className="text-center">Repos are loading...</p>}
+
+						{repositories?.map((repo) => (
+							<RepoCard key={repo.id} repo={repo} />
+						))}
+					</div>
 				</div>
 			</div>
 		</div>
