@@ -32,8 +32,14 @@ export function RepoCard({ repo }: RepoCardProps) {
 				<p className="text-sm font-thin">
 					{repo?.description}
 				</p>
-				{!isFavorite && <i className="ri-heart-add-line absolute top-0 right-0" onClick={addToFavorite}></i>}
-				{isFavorite && <i className="ri-heart-fill absolute top-0 right-0" onClick={removeFromFavorite}></i>}
+				{!isFavorite &&
+					<i className="ri-heart-add-line absolute top-0 right-0 cursor-pointer hover:opacity-70 transition-all"
+						onClick={addToFavorite}></i>
+				}
+				{isFavorite &&
+					<i className="ri-heart-fill absolute top-0 right-0 cursor-pointer hover:opacity-70 transition-all"
+						onClick={removeFromFavorite}></i>
+				}
 			</a>
 		</div>
 	)
