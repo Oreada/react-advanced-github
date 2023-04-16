@@ -128,3 +128,7 @@ export interface IOwner {
 	type: string
 	site_admin: boolean
 }
+
+export interface RepoCardProps {
+	repo: IRepo;
+}

@@ -1,11 +1,7 @@
 import { useState } from "react";
-import { IRepo } from "../models/models";
+import { RepoCardProps } from "../models/models";
 import { addFavorite, removeFavorite } from "../store/github/github.slice";
 import { useAppDispatch, useAppSelector } from "../store/hook";
-
-export interface RepoCardProps {
-	repo: IRepo;
-}
 
 export function RepoCard({ repo }: RepoCardProps) {
 	const favoritesList = useAppSelector((state) => state.github.favorites);
