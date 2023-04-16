@@ -23,7 +23,7 @@ export function RepoCard({ repo }: RepoCardProps) {
 
 	return (
 		<div className="border py-3 px-5 rounded mb-2 hover:shadow-md hover:bg-gray-100 transition-all">
-			<a href={repo.html_url} target="_blank" rel="noreferrer">
+			<a href={repo.html_url} target="_blank" rel="noreferrer" className="relative">
 				<h2 className="text-large font-bold">{repo.full_name}</h2>
 				<p className="text-sm">
 					Forks: <span className="font-bold mr-2">{repo.forks}</span>
@@ -32,18 +32,8 @@ export function RepoCard({ repo }: RepoCardProps) {
 				<p className="text-sm font-thin">
 					{repo?.description}
 				</p>
-				{!isFavorite && <button
-					className="py-2 px-4 bg-yellow-400 rounded hover:shadow-md transition-all"
-					onClick={addToFavorite}
-				>
-					Add
-				</button>}
-				{isFavorite && <button
-					className="py-2 px-4 bg-green-400 rounded hover:shadow-md transition-all"
-					onClick={removeFromFavorite}
-				>
-					Remove
-				</button>}
+				{!isFavorite && <i className="ri-heart-add-line absolute top-0 right-0" onClick={addToFavorite}></i>}
+				{isFavorite && <i className="ri-heart-fill absolute top-0 right-0" onClick={removeFromFavorite}></i>}
 			</a>
 		</div>
 	)
