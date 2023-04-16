@@ -1,3 +1,4 @@
+import { FavoriteCard } from "../components/FavoriteCard";
 import { useAppSelector } from "../store/hook"
 
 export function FavoritePage() {
@@ -9,12 +10,12 @@ export function FavoritePage() {
 
 	return (
 		<div className="pt-10 mx-auto h-full w-full flex justify-center">
-			<ul className="list-none">
+			<ul className="list-none flex flex-col gap-2">
 				{favoritesList.map((item) => (
 					<li
 						key={item}
 					>
-						<a href={item} target="_blank" rel="noreferrer">{item}</a>
+						<FavoriteCard repoLink={item} />
 					</li>
 				))}
 			</ul>
