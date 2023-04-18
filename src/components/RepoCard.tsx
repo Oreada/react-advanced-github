@@ -22,7 +22,7 @@ export function RepoCard({ repo }: RepoCardProps) {
 	};
 
 	return (
-		<div className="border py-3 px-5 rounded mb-2 hover:shadow-md hover:bg-gray-100 transition-all">
+		<div className="border py-3 px-5 rounded-sm hover:shadow-md hover:bg-gray-100 transition-all">
 			<a href={repo.html_url} target="_blank" rel="noreferrer" className="relative">
 				<h2 className="text-large font-bold">{repo.full_name}</h2>
 				<p className="text-sm">
