@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { IRepo, IUser, ServerResponse } from '../../models/models';
+import { IRepo, IUser, IUserInfo, ServerResponse } from '../../models/models';
 
 export const githubApi = createApi({
 	reducerPath: 'github/api',
@@ -28,6 +28,11 @@ export const githubApi = createApi({
 					per_page: 10,
 					page: 2,
 				}
+			}),
+		}),
+		getUserInfo: build.query<IUserInfo, string>({
+			query: (username: string) => ({
+				url: `users/${username}`,
 			}),
 		}),
 	})
