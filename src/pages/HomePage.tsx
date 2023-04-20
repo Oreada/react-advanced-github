@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { RepoCard } from "../components/RepoCard";
 import { useDebounce } from "../customHooks/debounce";
-import { useLazyGetUserReposQuery, useSearchUsersQuery } from "../store/github/github.api";
+import { useLazyGetUserInfoQuery, useLazyGetUserReposQuery, useSearchUsersQuery } from "../store/github/github.api";
+import { Pagination } from "../components/Pagination";
+import { useAppDispatch, useAppSelector } from "../store/hook";
+import { setPageCurrent, setPageTotal, setUsername } from "../store/pagination.slice";
+import { PER_PAGE_USER_REPOS } from "../constants";
 
 const root = document.querySelector('#root');
 (root as HTMLDivElement).style.height = '100%';
@@ -12,6 +16,7 @@ const html = document.querySelector('html');
 (html as HTMLElement).style.height = '100%';
 
 export function HomePage() {
+	const { pageCurrent, pageTotal, username } = useAppSelector((state) => state.pagination);
 	const [search, setSearch] = useState('');
 	const [dropdown, setDropdown] = useState(false);
 	const debounced = useDebounce(search);
@@ -22,6 +27,9 @@ export function HomePage() {
 	//! [функция-позволяющая-загружать-данные-по-запросу, {объект-как-в-обычном-хуке-запроса(как-в-useSearchUsersQuery-например)}]
 	const [fetchRepos, { data: repositories, isLoading: areReposLoading }] = useLazyGetUserReposQuery();
 	//! переименовали для этого вызова data в repositories, isLoading в areReposLoading, т.к. такие имена уже есть выше
+	const [fetchUserInfo, { data: userInfo }] = useLazyGetUserInfoQuery();
+
+	const dispatch = useAppDispatch();
 
 	// console.log(data);
 
@@ -33,13 +41,36 @@ export function HomePage() {
 		};
 	}, [debounced, data]);
 
+	useEffect(() => {
+		console.log('без проверки наличия userInfo', userInfo);
+		if (userInfo) {
+			console.log(userInfo.public_repos);
+
+			const userReposCount = userInfo.public_repos;
+			const userPageTotal = Math.ceil(userReposCount / PER_PAGE_USER_REPOS);
+			console.log(userPageTotal);
+
+			dispatch(setPageTotal(userPageTotal));
+		};
+	}, [dispatch, userInfo]);
+
+	useEffect(() => {
+		if (username) {
+			fetchRepos({ username, pageCurrent });
+		};
+	}, [pageCurrent, username]);
+
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearch(event.target.value);
 	};
 
 	const handleClick = (username: string) => {
-		fetchRepos(username);
+		dispatch(setUsername(username));
+		dispatch(setPageCurrent(1));
+		// fetchRepos({ username, pageCurrent }); //*TODO: потестить (пока перенесла в useEffect)
 		setDropdown(false);
+
+		fetchUserInfo(username);
 	};
 
 	return (
@@ -56,7 +87,7 @@ export function HomePage() {
 						onChange={handleChange}
 					/>
 
-					{dropdown && <ul className="list-none overflow-y-scroll absolute top-[42px] left-0 right-0 max-h-[200px] shadow-md bg-white">
+					{dropdown && <ul className="list-none overflow-y-scroll absolute z-10 top-[42px] left-0 right-0 max-h-[200px] shadow-md bg-white">
 						{isLoading && <p className="text-center">Loading...</p>}
 
 						{data?.map((user) => (
@@ -73,21 +104,15 @@ export function HomePage() {
 					<div className="container flex flex-col justify-center gap-2">
 						{areReposLoading && <p className="text-center">Repos are loading...</p>}
 
+						{userInfo?.public_repos === 0 && <p className="text-center">User does not have public repositories</p>}
+
 						{repositories?.map((repo) => (
 							<RepoCard key={repo.id} repo={repo} />
 						))}
 					</div>
 				</div>
 
-				<div className="flex flex-row justify-center items-center gap-6 pb-10">
-					<i className="ri-arrow-left-fill"></i>
-					<div className="flex flex-row justify-center items-center gap-2">
-						<span className="">pageCurrent</span>
-						<span className="">/</span>
-						<span className="">pageTotal</span>
-					</div>
-					<i className="ri-arrow-right-fill"></i>
-				</div>
+				<Pagination />
 			</div>
 		</div>
 	)

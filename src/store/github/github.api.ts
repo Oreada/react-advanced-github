@@ -22,12 +22,12 @@ export const githubApi = createApi({
 			//! потому что мне нужно только поле items в данном случае, а вообще ключ transformResponse не является обязательным
 			transformResponse: (response: ServerResponse) => response.items,
 		}),
-		getUserRepos: build.query<IRepo[], string>({
-			query: (username: string) => ({
+		getUserRepos: build.query<IRepo[], { username: string, pageCurrent: number }>({
+			query: ({ username, pageCurrent }) => ({
 				url: `users/${username}/repos`,
 				params: {
 					per_page: PER_PAGE_USER_REPOS,
-					page: 2,
+					page: pageCurrent,
 				}
 			}),
 		}),
