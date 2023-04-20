@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-const LS_FAV_KEY = 'reactGithubFavorite';
+import { LS_FAV_KEY } from '../../constants';
 
 export type GithubState = {
 	favorites: string[];

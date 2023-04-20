@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IRepo, IUser, IUserInfo, ServerResponse } from '../../models/models';
+import { PER_PAGE_SEARCH_USERS, PER_PAGE_USER_REPOS } from '../../constants';
 
 export const githubApi = createApi({
 	reducerPath: 'github/api',
@@ -15,7 +16,7 @@ export const githubApi = createApi({
 				url: `search/users`,
 				params: {
 					q: search,
-					per_page: 10,
+					per_page: PER_PAGE_SEARCH_USERS,
 				}
 			}),
 			//! потому что мне нужно только поле items в данном случае, а вообще ключ transformResponse не является обязательным
@@ -25,7 +26,7 @@ export const githubApi = createApi({
 			query: (username: string) => ({
 				url: `users/${username}/repos`,
 				params: {
-					per_page: 10,
+					per_page: PER_PAGE_USER_REPOS,
 					page: 2,
 				}
 			}),
@@ -39,4 +40,4 @@ export const githubApi = createApi({
 });
 
 //! префикс Lazy позволяет сделать запрос когда захотим, ведь нам нужно делать запрос после клика по опред.пользователю
-export const { useSearchUsersQuery, useLazyGetUserReposQuery } = githubApi;
+export const { useSearchUsersQuery, useLazyGetUserReposQuery, useLazyGetUserInfoQuery } = githubApi;
