@@ -5,7 +5,7 @@ export function FavoritePage() {
 	const favoritesList = useAppSelector((state) => state.github.favorites);
 
 	if (favoritesList.length === 0) {
-		return <p className="text-center">No favorite items</p>
+		return <p className="pt-10 text-center">No favorite repositories yet</p>
 	};
 
 	return (
