@@ -32,13 +32,13 @@ export function Pagination() {
 
 	return (
 		<div className="flex flex-row justify-center items-center gap-6 pb-10">
-			<i className="ri-arrow-left-fill cursor-pointer" onClick={handleLeftArrowClick}></i>
+			<i className="ri-arrow-left-fill cursor-pointer hover:opacity-70 transition-all" onClick={handleLeftArrowClick}></i>
 			<div className="flex flex-row justify-center items-center gap-2">
 				<span className="">{pageCurrent}</span>
 				<span className="">/</span>
 				<span className="">{pageTotal}</span>
 			</div>
-			<i className="ri-arrow-right-fill cursor-pointer" onClick={handleRightArrowClick}></i>
+			<i className="ri-arrow-right-fill cursor-pointer hover:opacity-70 transition-all" onClick={handleRightArrowClick}></i>
 		</div>
 	)
 }
