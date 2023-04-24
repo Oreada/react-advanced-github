@@ -14,7 +14,7 @@ export function FavoriteCard({ repoLink }: FavoriteCardProps) {
 	};
 
 	return (
-		<div className="flex justify-between items-center gap-6">
+		<div className="flex justify-between items-center gap-[60px]">
 			<a href={repoLink} target="_blank" rel="noreferrer" className="hover:underline">{repoLink}</a>
 			<i className="ri-delete-bin-2-line cursor-pointer hover:opacity-70 transition-all" onClick={removeFromFavorite}></i>
 		</div>
