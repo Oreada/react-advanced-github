@@ -1,11 +1,7 @@
 import { useState } from "react";
-import { IRepo } from "../models/models";
+import { RepoCardProps } from "../models/models";
 import { addFavorite, removeFavorite } from "../store/github/github.slice";
 import { useAppDispatch, useAppSelector } from "../store/hook";
-
-export interface RepoCardProps {
-	repo: IRepo;
-}
 
 export function RepoCard({ repo }: RepoCardProps) {
 	const favoritesList = useAppSelector((state) => state.github.favorites);
@@ -26,28 +22,24 @@ export function RepoCard({ repo }: RepoCardProps) {
 	};
 
 	return (
-		<div className="border py-3 px-5 rounded mb-2 hover:shadow-md hover:bg-gray-100 transition-all">
-			<a href={repo.html_url} target="_blank" rel="noreferrer">
-				<h2 className="text-large font-bold">{repo.full_name}</h2>
-				<p className="text-sm">
-					Forks: <span className="font-bold mr-2">{repo.forks}</span>
-					Watchers: <span className="font-bold">{repo.watchers}</span>
-				</p>
-				<p className="text-sm font-thin">
+		<div className="border py-3 px-5 rounded-sm hover:shadow-md hover:bg-gray-100 transition-all">
+			<a href={repo.html_url} target="_blank" rel="noreferrer" className="relative">
+				<h2 className="text-large font-bold pr-6">{repo.full_name}</h2>
+				<div className="text-sm font-thin pr-6">
 					{repo?.description}
-				</p>
-				{!isFavorite && <button
-					className="py-2 px-4 bg-yellow-400 rounded hover:shadow-md transition-all"
-					onClick={addToFavorite}
-				>
-					Add
-				</button>}
-				{isFavorite && <button
-					className="py-2 px-4 bg-green-400 rounded hover:shadow-md transition-all"
-					onClick={removeFromFavorite}
-				>
-					Remove
-				</button>}
+				</div>
+				<div className="text-sm">
+					Forks: <span className="font-bold mr-2">{repo.forks}</span>
+					{repo.language ? <div>Language:&nbsp;<span className="font-bold">{repo.language}</span></div> : null}
+				</div>
+				{!isFavorite &&
+					<i className="ri-heart-add-line absolute top-0 right-0 cursor-pointer hover:opacity-70 transition-all"
+						onClick={addToFavorite}></i>
+				}
+				{isFavorite &&
+					<i className="ri-heart-fill absolute top-0 right-0 cursor-pointer hover:opacity-70 transition-all"
+						onClick={removeFromFavorite}></i>
+				}
 			</a>
 		</div>
 	)

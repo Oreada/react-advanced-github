@@ -1,12 +1,26 @@
 import { useEffect, useState } from "react";
 import { RepoCard } from "../components/RepoCard";
 import { useDebounce } from "../customHooks/debounce";
-import { useLazyGetUserReposQuery, useSearchUsersQuery } from "../store/github/github.api"
+import { useLazyGetUserInfoQuery, useLazyGetUserReposQuery, useSearchUsersQuery } from "../store/github/github.api";
+import { Pagination } from "../components/Pagination";
+import { useAppDispatch, useAppSelector } from "../store/hook";
+import { setPageCurrent, setPageTotal, setUsername } from "../store/pagination.slice";
+import { PER_PAGE_USER_REPOS } from "../constants";
+
+//! прописываю стили root и html таким образом из-за Tailwind
+const root = document.querySelector('#root');
+(root as HTMLDivElement).style.height = '100%';
+(root as HTMLDivElement).style.display = 'flex';
+(root as HTMLDivElement).style.flexDirection = 'column';
+document.body.style.height = '100%';
+const html = document.querySelector('html');
+(html as HTMLElement).style.height = '100%';
 
 export function HomePage() {
+	const { pageCurrent, username } = useAppSelector((state) => state.pagination);
 	const [search, setSearch] = useState('');
 	const [dropdown, setDropdown] = useState(false);
-	const debounced = useDebounce(search);
+	const debounced = useDebounce(search); //! кастомный хук - нужен для того чтобы запрос поиска отправлялся не по каждой букве, а через интервал
 	const { data, isLoading, isError } = useSearchUsersQuery(debounced, {
 		//! это условие необходимо, чтобы не выполнялся запрос с пустым search, в результате которого выскакивает ошибка
 		skip: debounced.length < 3,
@@ -14,41 +28,65 @@ export function HomePage() {
 	//! [функция-позволяющая-загружать-данные-по-запросу, {объект-как-в-обычном-хуке-запроса(как-в-useSearchUsersQuery-например)}]
 	const [fetchRepos, { data: repositories, isLoading: areReposLoading }] = useLazyGetUserReposQuery();
 	//! переименовали для этого вызова data в repositories, isLoading в areReposLoading, т.к. такие имена уже есть выше
+	const [fetchUserInfo, { data: userInfo }] = useLazyGetUserInfoQuery();
 
-	// console.log(data);
+	const dispatch = useAppDispatch();
+
+	// console.log(data);  //! Список объектов IUser
+	// console.log(repositories);  //! Список объектов IRepo
 
 	useEffect(() => {
-		// console.log(debounced);
+		// console.log(debounced); //! часть слова, которая отправляется в поисковый запрос searchUsers
 
 		if (debounced.length > 2 && data?.length) {
 			setDropdown(true);
 		};
 	}, [debounced, data]);
 
+	useEffect(() => {
+		if (userInfo) {
+			const userReposCount = userInfo.public_repos;
+			const userPageTotal = Math.ceil(userReposCount / PER_PAGE_USER_REPOS);
+
+			dispatch(setPageTotal(userPageTotal));
+		};
+	}, [dispatch, userInfo]);
+
+	useEffect(() => {
+		if (username) {
+			fetchRepos({ username, pageCurrent });
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [pageCurrent, username]);
+
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearch(event.target.value);
 	};
 
 	const handleClick = (username: string) => {
-		fetchRepos(username);
+		dispatch(setUsername(username));
+		dispatch(setPageCurrent(1));
+		// fetchRepos({ username, pageCurrent }); //! перенесла в useEffect
 		setDropdown(false);
+
+		fetchUserInfo(username);
 	};
 
 	return (
-		<div className="pt-10 mx-auto h-full w-full">
+		<div className="flex-auto pt-10 h-full w-full">
 			{isError && <p className="text-center text-red-600 mb-10">Something went wrong!</p>}
 
-			<div className="flex justify-center">
-				<div className="relative w-[560px]">
+			<div className="flex flex-col justify-center items-center gap-4 min-h-full">
+				<div className="relative w-[500px] flex-auto flex flex-col gap-4">
 					<input
 						type="text"
-						className="border py-2 px-4 w-full h-[42px] mb-2"
+						className="border rounded-sm py-2 px-4 w-full h-[42px]"
 						placeholder="Search for GitHub username..."
 						value={search}
 						onChange={handleChange}
 					/>
 
-					{dropdown && <ul className="list-none overflow-y-scroll absolute top-[42px] left-0 right-0 max-h-[200px] shadow-md bg-white">
+					{dropdown && <ul className="list-none overflow-y-scroll absolute z-10 top-[42px] left-0 right-0 max-h-[200px] shadow-md bg-white">
 						{isLoading && <p className="text-center">Loading...</p>}
 
 						{data?.map((user) => (
@@ -62,14 +100,18 @@ export function HomePage() {
 						))}
 					</ul>}
 
-					<div className="container">
+					<div className="container flex flex-col justify-center gap-2">
 						{areReposLoading && <p className="text-center">Repos are loading...</p>}
+
+						{userInfo?.public_repos === 0 && <p className="text-center">User does not have public repositories</p>}
 
 						{repositories?.map((repo) => (
 							<RepoCard key={repo.id} repo={repo} />
 						))}
 					</div>
 				</div>
+
+				<Pagination />
 			</div>
 		</div>
 	)
