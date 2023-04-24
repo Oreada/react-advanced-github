@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "../store/hook";
 import { setPageCurrent, setPageTotal, setUsername } from "../store/pagination.slice";
 import { PER_PAGE_USER_REPOS } from "../constants";
 
+//! прописываю стили root и html таким образом из-за Tailwind
 const root = document.querySelector('#root');
 (root as HTMLDivElement).style.height = '100%';
 (root as HTMLDivElement).style.display = 'flex';
@@ -35,7 +36,7 @@ export function HomePage() {
 	// console.log(repositories);  //! Список объектов IRepo
 
 	useEffect(() => {
-		// console.log(debounced);
+		console.log(debounced); //! часть слова, которая отправляется в поисковый запрос searchUsers
 
 		if (debounced.length > 2 && data?.length) {
 			setDropdown(true);
@@ -44,7 +45,6 @@ export function HomePage() {
 
 	useEffect(() => {
 		if (userInfo) {
-
 			const userReposCount = userInfo.public_repos;
 			const userPageTotal = Math.ceil(userReposCount / PER_PAGE_USER_REPOS);
 
@@ -56,6 +56,7 @@ export function HomePage() {
 		if (username) {
 			fetchRepos({ username, pageCurrent });
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [pageCurrent, username]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
