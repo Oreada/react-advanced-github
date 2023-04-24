@@ -36,7 +36,7 @@ export function HomePage() {
 	// console.log(repositories);  //! Список объектов IRepo
 
 	useEffect(() => {
-		console.log(debounced); //! часть слова, которая отправляется в поисковый запрос searchUsers
+		// console.log(debounced); //! часть слова, которая отправляется в поисковый запрос searchUsers
 
 		if (debounced.length > 2 && data?.length) {
 			setDropdown(true);

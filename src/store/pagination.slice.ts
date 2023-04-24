@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { LS_TOTALPAGE_KEY, LS_USERNAME_KEY } from "../constants";
 
 type PaginationState = {
 	pageCurrent: number;
@@ -9,9 +10,9 @@ type PaginationState = {
 
 const initialState: PaginationState = {
 	pageCurrent: 1,
-	pageTotal: 1,
+	pageTotal: Number(localStorage.getItem(LS_TOTALPAGE_KEY)) !== 0 ? Number(localStorage.getItem(LS_TOTALPAGE_KEY)) : 1,
 
-	username: '',
+	username: localStorage.getItem(LS_USERNAME_KEY) ?? '',
 };
 
 const paginationSlice = createSlice({
@@ -23,9 +24,11 @@ const paginationSlice = createSlice({
 		},
 		setPageTotal(state, action: PayloadAction<number>) {
 			state.pageTotal = action.payload;
+			localStorage.setItem(LS_TOTALPAGE_KEY, String(state.pageTotal));
 		},
 		setUsername(state, action: PayloadAction<string>) {
 			state.username = action.payload;
+			localStorage.setItem(LS_USERNAME_KEY, state.username);
 		},
 	}
 });
