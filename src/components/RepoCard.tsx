@@ -24,14 +24,14 @@ export function RepoCard({ repo }: RepoCardProps) {
 	return (
 		<div className="border py-3 px-5 rounded-sm hover:shadow-md hover:bg-gray-100 transition-all">
 			<a href={repo.html_url} target="_blank" rel="noreferrer" className="relative">
-				<h2 className="text-large font-bold">{repo.full_name}</h2>
-				<p className="text-sm">
-					Forks: <span className="font-bold mr-2">{repo.forks}</span>
-					Watchers: <span className="font-bold">{repo.watchers}</span>
-				</p>
-				<p className="text-sm font-thin">
+				<h2 className="text-large font-bold pr-6">{repo.full_name}</h2>
+				<div className="text-sm font-thin pr-6">
 					{repo?.description}
-				</p>
+				</div>
+				<div className="text-sm">
+					Forks: <span className="font-bold mr-2">{repo.forks}</span>
+					{repo.language ? <div>Language:&nbsp;<span className="font-bold">{repo.language}</span></div> : null}
+				</div>
 				{!isFavorite &&
 					<i className="ri-heart-add-line absolute top-0 right-0 cursor-pointer hover:opacity-70 transition-all"
 						onClick={addToFavorite}></i>

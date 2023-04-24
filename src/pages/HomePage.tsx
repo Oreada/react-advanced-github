@@ -16,10 +16,10 @@ const html = document.querySelector('html');
 (html as HTMLElement).style.height = '100%';
 
 export function HomePage() {
-	const { pageCurrent, pageTotal, username } = useAppSelector((state) => state.pagination);
+	const { pageCurrent, username } = useAppSelector((state) => state.pagination);
 	const [search, setSearch] = useState('');
 	const [dropdown, setDropdown] = useState(false);
-	const debounced = useDebounce(search);
+	const debounced = useDebounce(search); //! кастомный хук - нужен для того чтобы запрос поиска отправлялся не по каждой букве, а через интервал
 	const { data, isLoading, isError } = useSearchUsersQuery(debounced, {
 		//! это условие необходимо, чтобы не выполнялся запрос с пустым search, в результате которого выскакивает ошибка
 		skip: debounced.length < 3,
@@ -31,7 +31,8 @@ export function HomePage() {
 
 	const dispatch = useAppDispatch();
 
-	// console.log(data);
+	// console.log(data);  //! Список объектов IUser
+	// console.log(repositories);  //! Список объектов IRepo
 
 	useEffect(() => {
 		// console.log(debounced);
@@ -42,13 +43,10 @@ export function HomePage() {
 	}, [debounced, data]);
 
 	useEffect(() => {
-		console.log('без проверки наличия userInfo', userInfo);
 		if (userInfo) {
-			console.log(userInfo.public_repos);
 
 			const userReposCount = userInfo.public_repos;
 			const userPageTotal = Math.ceil(userReposCount / PER_PAGE_USER_REPOS);
-			console.log(userPageTotal);
 
 			dispatch(setPageTotal(userPageTotal));
 		};
@@ -67,7 +65,7 @@ export function HomePage() {
 	const handleClick = (username: string) => {
 		dispatch(setUsername(username));
 		dispatch(setPageCurrent(1));
-		// fetchRepos({ username, pageCurrent }); //*TODO: потестить (пока перенесла в useEffect)
+		// fetchRepos({ username, pageCurrent }); //! перенесла в useEffect
 		setDropdown(false);
 
 		fetchUserInfo(username);
@@ -78,7 +76,7 @@ export function HomePage() {
 			{isError && <p className="text-center text-red-600 mb-10">Something went wrong!</p>}
 
 			<div className="flex flex-col justify-center items-center gap-4 min-h-full">
-				<div className="relative w-[480px] flex-auto flex flex-col gap-4">
+				<div className="relative w-[500px] flex-auto flex flex-col gap-4">
 					<input
 						type="text"
 						className="border rounded-sm py-2 px-4 w-full h-[42px]"

@@ -6,7 +6,7 @@ import { setPageCurrent } from "../store/pagination.slice";
 export function Pagination() {
 	const { pageCurrent } = useAppSelector((state) => state.pagination);
 	const { pageTotal } = useAppSelector((state) => state.pagination);
-	const { username } = useAppSelector((state) => state.pagination);
+	// const { username } = useAppSelector((state) => state.pagination);
 
 	// const [fetchRepos, { data: repositories }] = useLazyGetUserReposQuery();
 
